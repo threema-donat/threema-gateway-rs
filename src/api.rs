@@ -512,7 +512,7 @@ impl ApiBuilder {
     /// The API endpoint should be a HTTPS URL without trailing slash.
     pub fn with_custom_endpoint<E: Into<Cow<'static, str>>>(mut self, endpoint: E) -> Self {
         let endpoint = endpoint.into();
-        debug!("Using custom endpoint: {}", endpoint);
+        debug!("Using custom endpoint: {endpoint}");
         if !(endpoint.starts_with("http:") || endpoint.starts_with("https:")) {
             warn!("Custom endpoint seems invalid!");
         }
@@ -559,7 +559,7 @@ impl ApiBuilder {
             HEXLOWER_PERMISSIVE
                 .decode(private_key.as_bytes())
                 .map_err(|e| {
-                    let msg = format!("Could not decode private key hex string: {}", e);
+                    let msg = format!("Could not decode private key hex string: {e}");
                     ApiBuilderError::InvalidKey(msg)
                 })?;
         self.with_private_key_bytes(&private_key_bytes)

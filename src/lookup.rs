@@ -30,10 +30,10 @@ pub enum LookupCriterion {
 impl fmt::Display for LookupCriterion {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            LookupCriterion::Phone(n) => write!(f, "phone {}", n),
-            LookupCriterion::PhoneHash(nh) => write!(f, "phone hash {}", nh),
-            LookupCriterion::Email(e) => write!(f, "email {}", e),
-            LookupCriterion::EmailHash(eh) => write!(f, "email hash {}", eh),
+            LookupCriterion::Phone(n) => write!(f, "phone {n}"),
+            LookupCriterion::PhoneHash(nh) => write!(f, "phone hash {nh}"),
+            LookupCriterion::Email(e) => write!(f, "email {e}"),
+            LookupCriterion::EmailHash(eh) => write!(f, "email hash {eh}"),
         }
     }
 }
@@ -127,11 +127,10 @@ pub(crate) async fn lookup_pubkey(
 ) -> Result<RecipientKey, ApiError> {
     // Build URL
     let url = format!(
-        "{}/pubkeys/{}?from={}&secret={}",
-        endpoint, their_id, our_id, secret
+        "{endpoint}/pubkeys/{their_id}?from={our_id}&secret={secret}"
     );
 
-    debug!("Looking up public key for {}", their_id);
+    debug!("Looking up public key for {their_id}");
 
     // Send request
     let res = client.get(&url).send().await?;
@@ -145,13 +144,12 @@ pub(crate) async fn lookup_pubkey(
     let bytes_decoded = HEXLOWER_PERMISSIVE
         .decode_mut(&pubkey_hex_bytes, &mut pubkey)
         .map_err(|e| {
-            warn!("Could not parse public key fetched from API: {:?}", e);
+            warn!("Could not parse public key fetched from API: {e:?}");
             ApiError::ParseError("Invalid hex bytes for public key".to_string())
         })?;
     if bytes_decoded != KEY_SIZE {
         return Err(ApiError::ParseError(format!(
-            "Invalid public key: Length must be 32 bytes, but is {} bytes",
-            bytes_decoded
+            "Invalid public key: Length must be 32 bytes, but is {bytes_decoded} bytes"
         )));
     }
     Ok(pubkey.into())
@@ -167,14 +165,14 @@ pub(crate) async fn lookup_id(
 ) -> Result<String, ApiError> {
     // Build URL
     let url_base = match criterion {
-        LookupCriterion::Phone(val) => format!("{}/lookup/phone/{}", endpoint, val),
-        LookupCriterion::PhoneHash(val) => format!("{}/lookup/phone_hash/{}", endpoint, val),
-        LookupCriterion::Email(val) => format!("{}/lookup/email/{}", endpoint, val),
-        LookupCriterion::EmailHash(val) => format!("{}/lookup/email_hash/{}", endpoint, val),
+        LookupCriterion::Phone(val) => format!("{endpoint}/lookup/phone/{val}"),
+        LookupCriterion::PhoneHash(val) => format!("{endpoint}/lookup/phone_hash/{val}"),
+        LookupCriterion::Email(val) => format!("{endpoint}/lookup/email/{val}"),
+        LookupCriterion::EmailHash(val) => format!("{endpoint}/lookup/email_hash/{val}"),
     };
-    let url = format!("{}?from={}&secret={}", url_base, our_id, secret);
+    let url = format!("{url_base}?from={our_id}&secret={secret}");
 
-    debug!("Looking up id key for {}", criterion);
+    debug!("Looking up id key for {criterion}");
 
     // Send request
     let res = client.get(&url).send().await?;
@@ -191,7 +189,7 @@ pub(crate) async fn lookup_credits(
     our_id: &str,
     secret: &str,
 ) -> Result<i64, ApiError> {
-    let url = format!("{}/credits?from={}&secret={}", endpoint, our_id, secret);
+    let url = format!("{endpoint}/credits?from={our_id}&secret={secret}");
 
     debug!("Looking up remaining credits");
 
@@ -203,8 +201,7 @@ pub(crate) async fn lookup_credits(
     let body = res.text().await?;
     body.trim().parse::<i64>().map_err(|_| {
         ApiError::ParseError(format!(
-            "Could not parse response body as i64: \"{}\"",
-            body
+            "Could not parse response body as i64: \"{body}\""
         ))
     })
 }
@@ -219,11 +216,10 @@ pub(crate) async fn lookup_capabilities(
 ) -> Result<Capabilities, ApiError> {
     // Build URL
     let url = format!(
-        "{}/capabilities/{}?from={}&secret={}",
-        endpoint, their_id, our_id, secret
+        "{endpoint}/capabilities/{their_id}?from={our_id}&secret={secret}"
     );
 
-    debug!("Looking up capabilities for {}", their_id);
+    debug!("Looking up capabilities for {their_id}");
 
     // Send request
     let res = client.get(&url).send().await?;

@@ -44,7 +44,7 @@ async fn main() {
         "media" => RenderingType::Media,
         "sticker" => RenderingType::Sticker,
         other => {
-            eprintln!("Invalid rendering type: {}", other);
+            eprintln!("Invalid rendering type: {other}");
             process::exit(1);
         }
     };
@@ -56,7 +56,7 @@ async fn main() {
     // Verify thumbnail file type
     if let Some(t) = thumbpath {
         if t.extension() != Some(OsStr::new("jpg")) {
-            eprintln!("Thumbnail at {:?} must end with .jpg", t);
+            eprintln!("Thumbnail at {t:?} must end with .jpg");
             process::exit(1);
         }
     }
@@ -134,7 +134,7 @@ async fn main() {
     // Send
     let msg_id = api.send(to, &encrypted, false).await;
     match msg_id {
-        Ok(id) => println!("Sent. Message id is {}.", id),
-        Err(e) => println!("Could not send message: {}", e),
+        Ok(id) => println!("Sent. Message id is {id}."),
+        Err(e) => println!("Could not send message: {e}"),
     }
 }

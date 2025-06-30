@@ -100,8 +100,7 @@ impl IncomingMessage {
             .map_err(|_| ApiError::ParseError("Invalid hex bytes for MAC".to_string()))?;
         if bytes_decoded != 32 {
             return Err(ApiError::ParseError(format!(
-                "Invalid MAC: Length must be 32 bytes, but is {} bytes",
-                bytes_decoded
+                "Invalid MAC: Length must be 32 bytes, but is {bytes_decoded} bytes"
             )));
         }
 
@@ -113,7 +112,7 @@ impl IncomingMessage {
                 values
                     .get(*field)
                     .ok_or_else(|| {
-                        ApiError::ParseError(format!("Missing request body field: {}", field))
+                        ApiError::ParseError(format!("Missing request body field: {field}"))
                     })?
                     .as_bytes(),
             );
@@ -125,7 +124,7 @@ impl IncomingMessage {
 
         // MAC is valid, we can now deserialize
         serde_urlencoded::from_bytes(bytes)
-            .map_err(|e| ApiError::ParseError(format!("Could not parse message: {}", e)))
+            .map_err(|e| ApiError::ParseError(format!("Could not parse message: {e}")))
     }
 
     /// Decrypt the box using the specified keys and remove padding.
@@ -190,7 +189,7 @@ mod tests {
         fn invalid_mac() {
             match IncomingMessage::from_urlencoded_bytes(TEST_PAYLOAD, "nevergonnaletyoudown") {
                 Err(ApiError::InvalidMac) => { /* good! */ }
-                other => panic!("Unexpected result: {:?}", other),
+                other => panic!("Unexpected result: {other:?}"),
             }
         }
     }

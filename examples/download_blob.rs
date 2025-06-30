@@ -24,7 +24,7 @@ async fn main() {
     let blob_id: BlobId = match args.get_str("<blob-id>").parse() {
         Ok(val) => val,
         Err(e) => {
-            eprintln!("Could not decode blob ID from hex: {}", e);
+            eprintln!("Could not decode blob ID from hex: {e}");
             process::exit(1);
         }
     };
@@ -46,10 +46,10 @@ async fn main() {
         .unwrap();
 
     // Download blob
-    println!("Downloading blob with ID {}...", blob_id);
+    println!("Downloading blob with ID {blob_id}...");
     let bytes = match api.blob_download(&blob_id).await {
         Err(e) => {
-            eprintln!("Could not download blob: {}", e);
+            eprintln!("Could not download blob: {e}");
             process::exit(1);
         }
         Ok(bytes) => {

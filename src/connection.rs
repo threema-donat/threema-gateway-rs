@@ -35,7 +35,7 @@ pub(crate) fn map_response_code(
         StatusCode::PAYLOAD_TOO_LARGE => Err(ApiError::MessageTooLong),
         // 500
         StatusCode::INTERNAL_SERVER_ERROR => Err(ApiError::ServerError),
-        e => Err(ApiError::Other(format!("Bad response status code: {}", e))),
+        e => Err(ApiError::Other(format!("Bad response status code: {e}"))),
     }
 }
 
@@ -74,9 +74,7 @@ pub(crate) async fn send_simple(
     text: &str,
 ) -> Result<String, ApiError> {
     log::debug!(
-        "Sending transport encrypted message from {} to {:?}",
-        from,
-        to
+        "Sending transport encrypted message from {from} to {to:?}"
     );
 
     // Check text length (max 3500 bytes)
@@ -99,7 +97,7 @@ pub(crate) async fn send_simple(
     // Send request
     log::trace!("Sending HTTP request");
     let res = client
-        .post(format!("{}/send_simple", endpoint))
+        .post(format!("{endpoint}/send_simple"))
         .form(&params)
         .header("accept", "application/json")
         .send()
@@ -123,7 +121,7 @@ pub(crate) async fn send_e2e(
     delivery_receipts: bool,
     additional_params: Option<HashMap<String, String>>,
 ) -> Result<String, ApiError> {
-    log::debug!("Sending e2e encrypted message from {} to {}", from, to);
+    log::debug!("Sending e2e encrypted message from {from} to {to}");
 
     // Prepare POST data
     let mut params = additional_params.unwrap_or_default();
@@ -139,7 +137,7 @@ pub(crate) async fn send_e2e(
     // Send request
     log::trace!("Sending HTTP request");
     let res = client
-        .post(format!("{}/send_e2e", endpoint))
+        .post(format!("{endpoint}/send_e2e"))
         .form(&params)
         .header("accept", "application/json")
         .send()
@@ -162,7 +160,7 @@ pub(crate) async fn blob_upload(
     additional_params: Option<HashMap<String, String>>,
 ) -> Result<BlobId, ApiError> {
     // Build URL
-    let mut url = format!("{}/upload_blob?from={}&secret={}", endpoint, from, secret);
+    let mut url = format!("{endpoint}/upload_blob?from={from}&secret={secret}");
     if persist {
         url.push_str("&persist=1");
     }
@@ -204,8 +202,7 @@ pub(crate) async fn blob_download(
 ) -> Result<Vec<u8>, ApiError> {
     // Build URL
     let url = format!(
-        "{}/blobs/{}?from={}&secret={}",
-        endpoint, blob_id, from, secret
+        "{endpoint}/blobs/{blob_id}?from={from}&secret={secret}"
     );
 
     // Send request
