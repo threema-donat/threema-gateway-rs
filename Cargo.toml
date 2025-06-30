@@ -17,6 +17,7 @@ include = [
     "LICENSE-APACHE",
 ]
 edition = "2024"
+rust-version = "1.85.0"
 
 [features]
 default = ["receive"]
