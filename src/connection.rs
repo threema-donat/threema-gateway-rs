@@ -73,9 +73,7 @@ pub(crate) async fn send_simple(
     secret: &str,
     text: &str,
 ) -> Result<String, ApiError> {
-    log::debug!(
-        "Sending transport encrypted message from {from} to {to:?}"
-    );
+    log::debug!("Sending transport encrypted message from {from} to {to:?}");
 
     // Check text length (max 3500 bytes)
     // Note: Strings in Rust are UTF8, so len() returns the byte count.
@@ -201,9 +199,7 @@ pub(crate) async fn blob_download(
     blob_id: &BlobId,
 ) -> Result<Vec<u8>, ApiError> {
     // Build URL
-    let url = format!(
-        "{endpoint}/blobs/{blob_id}?from={from}&secret={secret}"
-    );
+    let url = format!("{endpoint}/blobs/{blob_id}?from={from}&secret={secret}");
 
     // Send request
     let res = client.get(&url).send().await?;

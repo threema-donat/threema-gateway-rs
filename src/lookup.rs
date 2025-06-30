@@ -126,9 +126,7 @@ pub(crate) async fn lookup_pubkey(
     secret: &str,
 ) -> Result<RecipientKey, ApiError> {
     // Build URL
-    let url = format!(
-        "{endpoint}/pubkeys/{their_id}?from={our_id}&secret={secret}"
-    );
+    let url = format!("{endpoint}/pubkeys/{their_id}?from={our_id}&secret={secret}");
 
     debug!("Looking up public key for {their_id}");
 
@@ -200,9 +198,7 @@ pub(crate) async fn lookup_credits(
     // Read, parse and return response body
     let body = res.text().await?;
     body.trim().parse::<i64>().map_err(|_| {
-        ApiError::ParseError(format!(
-            "Could not parse response body as i64: \"{body}\""
-        ))
+        ApiError::ParseError(format!("Could not parse response body as i64: \"{body}\""))
     })
 }
 
@@ -215,9 +211,7 @@ pub(crate) async fn lookup_capabilities(
     secret: &str,
 ) -> Result<Capabilities, ApiError> {
     // Build URL
-    let url = format!(
-        "{endpoint}/capabilities/{their_id}?from={our_id}&secret={secret}"
-    );
+    let url = format!("{endpoint}/capabilities/{their_id}?from={our_id}&secret={secret}");
 
     debug!("Looking up capabilities for {their_id}");
 
